@@ -58,7 +58,7 @@ uint32_t hex_string_to_uint32_t(char *hex_string){
   return out;
 }
 
-address create_address(char *hex_string, struct cache config){
+address decode_address(char *hex_string, struct cache config){
   uint32_t hex = hex_string_to_uint32_t(hex_string);
   address new_address;
   new_address.tag = extract_tag(hex, config);
@@ -67,6 +67,6 @@ address create_address(char *hex_string, struct cache config){
   return new_address;
 }
 
-block *create_block_array(struct cache config){
+block *create_memory_level(struct cache config){
   return malloc(config.num_blocks*(sizeof(block)));
 }

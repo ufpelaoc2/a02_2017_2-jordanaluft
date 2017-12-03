@@ -105,8 +105,8 @@ void test_hex_string_to_uint32_t(){
   isEqual(esperado, observado, 1);
 }
 
-void test_create_address(){
-  DESCRIBE("create_address");
+void test_decode_address(){
+  DESCRIBE("decode_address");
 
   WHEN("address: FFFFFC0A");
   THEN("index: 0, offset: 10, tag: 4194303");
@@ -119,21 +119,21 @@ void test_create_address(){
   esperado.offset = 10;
   esperado.index = 0;
 
-  address observado = create_address(hex, config);
+  address observado = decode_address(hex, config);
   isEqual(esperado.tag, observado.tag, 1);
   isEqual(esperado.offset, observado.offset, 1);
   isEqual(esperado.index, observado.index, 1);
 }
 
-void test_create_block_array(){
-  DESCRIBE("create_block_array");
+void test_create_memory_level(){
+  DESCRIBE("create_memory_level");
 
   WHEN("num_blocks: 64");
   THEN("Não quebra");
 
   struct cache config = {1, 6, 64, 1};
 
-  block *array_address = create_block_array(config);
+  block *array_address = create_memory_level(config);
   isNotNull(array_address, 1);
 }
 
@@ -146,7 +146,7 @@ int main(){
   test_extract_offset();
   test_extract_index();
   test_hex_string_to_uint32_t();
-  test_create_address();
-  test_create_block_array();
+  test_decode_address();
+  test_create_memory_level();
   return 0;
 }
