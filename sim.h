@@ -75,4 +75,8 @@ struct stats *create_stats(int num_configs);
 
 void h_memory_read(block** h_memory, struct cache *configs, int num_configs, struct stats *stats, char *hex_string);
 
+bool run_simulation(block** h_memory, struct stats *stats,
+                    struct cache *configs, int num_configs,
+                    uint32_t mem_lat, char mode, char *address);
+
 #endif // _SIM_H_

@@ -147,27 +147,30 @@ struct stats * sim(struct cache * configs, int num_configs,
     }
     while(!feof(fp)){
       fscanf(fp, "%c %s\n", &mode, address);
-      stats->cycles += mem_lat;
-      if (mode == 'R')
-        h_memory_read(h_memory, configs, num_configs, stats, address);
-      else if (mode == 'W')
-        h_memory_write(h_memory, configs, num_configs, address);
-      else
-        return NULL;
+      run_simulation(h_memory, stats, configs, num_configs,
+                     mem_lat, mode, address);
     }
     fclose(fp);
   } else {
     for(int i = 0; stream[i] != '\0'; i += 11){
       sscanf(stream + i, "%c %s\n", &mode, address);
-      stats->cycles += mem_lat;
-      if (mode == 'R')
-        h_memory_read(h_memory, configs, num_configs, stats, address);
-      else if (mode == 'W')
-        h_memory_write(h_memory, configs, num_configs, address);
-      else
-        return NULL;
+      run_simulation(h_memory, stats, configs, num_configs,
+                     mem_lat, mode, address);
     }
   }
 
   return stats;
+}
+
+bool run_simulation(block** h_memory, struct stats *stats,
+                    struct cache *configs, int num_configs,
+                    uint32_t mem_lat, char mode, char *address){
+  stats->cycles += mem_lat;
+  if (mode == 'R')
+    h_memory_read(h_memory, configs, num_configs, stats, address);
+  else if (mode == 'W')
+    h_memory_write(h_memory, configs, num_configs, address);
+  else
+    return false;
+  return true;
 }
