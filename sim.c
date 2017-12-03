@@ -157,7 +157,16 @@ struct stats * sim(struct cache * configs, int num_configs,
     }
     fclose(fp);
   } else {
-    puts(stream);
+    for(int i = 0; stream[i] != '\0'; i += 11){
+      sscanf(stream + i, "%c %s\n", &mode, address);
+      stats->cycles += mem_lat;
+      if (mode == 'R')
+        h_memory_read(h_memory, configs, num_configs, stats, address);
+      else if (mode == 'W')
+        h_memory_write(h_memory, configs, num_configs, address);
+      else
+        return NULL;
+    }
   }
 
   return stats;

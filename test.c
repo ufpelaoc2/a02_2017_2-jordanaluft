@@ -255,11 +255,30 @@ void test_h_memory_read(){
   isEqual(stats->misses[0], 0, 1);
 }
 
-void test_sim(){
+void test_sim_file(){
   DESCRIBE("sim with filename");
 
   char *filename = "mytrace.txt";
   char *stream = NULL;
+  uint32_t mem_lat = 1;
+  int num_configs = 2;
+  struct cache config1 = {1, 16, 64, 42};
+  struct cache config2 = {1, 8, 16, 4};
+  struct cache configs[] = {config1, config2};
+  struct stats *stats = sim(configs, num_configs, mem_lat, filename, stream);
+
+  isEqual(stats->cycles, 44, 1);
+  isEqual(stats->hits[0], 1, 1);
+  isEqual(stats->misses[0], 0, 1);
+  isEqual(stats->hits[1], 0, 1);
+  isEqual(stats->misses[1], 0, 1);
+}
+
+void test_sim_stream(){
+  DESCRIBE("sim with stream");
+
+  char *filename = NULL;
+  char *stream = "W FFFFFC0A\nR FFFFFC0A\n";
   uint32_t mem_lat = 1;
   int num_configs = 2;
   struct cache config1 = {1, 16, 64, 42};
@@ -291,6 +310,7 @@ int main(){
   test_h_memory_write();
   test_create_stats();
   test_h_memory_read();
-  test_sim();
+  test_sim_file();
+  test_sim_stream();
   return 0;
 }
