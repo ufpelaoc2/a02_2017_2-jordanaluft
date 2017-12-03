@@ -65,4 +65,6 @@ block *create_memory_level(struct cache config);
 
 bool level_read(block *level, struct cache config, char *hex_string);
 
+void level_write(block *level, struct cache config, char *hex_string);
+
 #endif // _SIM_H_

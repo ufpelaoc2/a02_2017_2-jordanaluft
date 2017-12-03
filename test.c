@@ -169,7 +169,22 @@ void test_level_read(){
   esperado = true;
   observado = level_read(level, config, "FFFFFC0A");
   isEqual(observado, esperado, 1);
+}
 
+void test_level_write(){
+  DESCRIBE("level write");
+
+  WHEN("Written");
+  THEN("Return True");
+
+  char *hex_string = "FFFFFC0A";
+  struct cache config = {1, 16, 64, 1};
+  block *level = create_memory_level(config);
+
+  level_write(level, config, hex_string);
+  bool observado = level_read(level, config, hex_string);
+  bool esperado = true;
+  isEqual(esperado, observado, 1);
 }
 
 int main(){
@@ -184,5 +199,6 @@ int main(){
   test_decode_address();
   test_create_memory_level();
   test_level_read();
+  test_level_write();
   return 0;
 }

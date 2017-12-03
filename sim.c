@@ -82,3 +82,9 @@ bool level_read(block *level, struct cache config, char *hex_string){
     return true;
   return false;
 }
+
+void level_write(block *level, struct cache config, char *hex_string){
+  address a = decode_address(hex_string, config);
+  block b = {a.tag, true};
+  level[a.index] = b;
+}
