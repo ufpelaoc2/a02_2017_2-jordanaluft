@@ -1,3 +1,4 @@
+#include <stdbool.h>
 #include "simplegrade.h"
 #include "sim.h"
 
@@ -84,7 +85,7 @@ void test_extract_index(){
   DESCRIBE("extract_offset");
 
   WHEN("address: 4294966474"); // 11111111111111111111110011001010
-  THEN("offset: 12");
+  THEN("index: 12");
 
   struct cache config = {1, 16, 64, 1};
   uint32_t address = 4294966474;
@@ -137,6 +138,40 @@ void test_create_memory_level(){
   isNotNull(array_address, 1);
 }
 
+void test_level_read(){
+  DESCRIBE("Level read. Return True if hit, false if miss.");
+
+  WHEN("Cold");
+  THEN("Return false");
+
+  char *hex_string = "00000000";
+  struct cache config = {1, 16, 64, 1};
+  block *level = create_memory_level(config);
+  bool observado = level_read(level, config, hex_string);
+  bool esperado = false;
+  isEqual(observado, esperado, 1);
+
+  WHEN("Hot and Tag Not Equal");
+  THEN("Return false");
+
+  block b = {4194304, true};
+  level[0] = b;
+  observado = level_read(level, config, "FFFFFC0A");
+
+  esperado = false;
+  isEqual(observado, esperado, 1);
+
+  WHEN("Hot and Tag Equal");
+  THEN("Return True");
+
+  b.tag = 4194303;
+  level[0] = b;
+  esperado = true;
+  observado = level_read(level, config, "FFFFFC0A");
+  isEqual(observado, esperado, 1);
+
+}
+
 int main(){
   test_address_to_index();
   test_find_index_size();
@@ -148,5 +183,6 @@ int main(){
   test_hex_string_to_uint32_t();
   test_decode_address();
   test_create_memory_level();
+  test_level_read();
   return 0;
 }

@@ -70,3 +70,15 @@ address decode_address(char *hex_string, struct cache config){
 block *create_memory_level(struct cache config){
   return malloc(config.num_blocks*(sizeof(block)));
 }
+
+bool level_read(block *level, struct cache config, char *hex_string){
+  // Retorna true se bloco é valido e tag é igual, retorna false caso
+  // contrário
+  address a = decode_address(hex_string, config);
+  block b = level[a.index];
+  if (!b.valid)
+    return false;
+  if (b.tag == a.tag)
+    return true;
+  return false;
+}

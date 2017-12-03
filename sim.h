@@ -63,4 +63,6 @@ address decode_address(char *hex_string, struct cache config);
 
 block *create_memory_level(struct cache config);
 
+bool level_read(block *level, struct cache config, char *hex_string);
+
 #endif // _SIM_H_
