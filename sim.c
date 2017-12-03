@@ -4,7 +4,7 @@
 #include <stdlib.h>
 #include "sim.h"
 
-int address_to_index(int address, struct cache config){
+int address_to_index(int address, struct cache config) {
   int index, aux;
   aux = address/config.block; // endereco / bytes por bloco
   index = aux%(config.num_blocks);
@@ -12,29 +12,29 @@ int address_to_index(int address, struct cache config){
   return index;
 }
 
-int find_index_size(struct cache config){
+int find_index_size(struct cache config) {
   return (log2(config.num_blocks));
 }
 
-int find_offset_size(struct cache config){
+int find_offset_size(struct cache config) {
   return (log2(config.block));
 }
 
-int find_tag_size(struct cache config){
+int find_tag_size(struct cache config) {
   int index_size = find_index_size(config);
   int offset_size = find_offset_size(config);
   int tag_size = ACCESS_SIZE - (index_size + offset_size);
   return tag_size;
 }
 
-int extract_tag(uint32_t address, struct cache config){
+int extract_tag(uint32_t address, struct cache config) {
   int index_size = find_index_size(config);
   int offset_size = find_offset_size(config);
   int size = index_size + offset_size;
   return (address >> size);
 }
 
-int extract_offset(uint32_t address, struct cache config){
+int extract_offset(uint32_t address, struct cache config) {
   int index_size = find_index_size(config);
   int tag_size = find_tag_size(config);
   int size = index_size + tag_size;
@@ -42,7 +42,7 @@ int extract_offset(uint32_t address, struct cache config){
   return (aux >> size);
 }
 
-int extract_index(uint32_t address, struct cache config){
+int extract_index(uint32_t address, struct cache config) {
   int offset_size = find_offset_size(config);
   int tag_size = find_tag_size(config);
   uint32_t aux = (address << tag_size);
@@ -50,7 +50,7 @@ int extract_index(uint32_t address, struct cache config){
   return (aux >> size);
 }
 
-uint32_t hex_string_to_uint32_t(char *hex_string){
+uint32_t hex_string_to_uint32_t(char *hex_string) {
   char buffer[11] = "0x";
   uint32_t out;
   strcat(buffer, hex_string);
@@ -58,7 +58,7 @@ uint32_t hex_string_to_uint32_t(char *hex_string){
   return out;
 }
 
-address decode_address(char *hex_string, struct cache config){
+address decode_address(char *hex_string, struct cache config) {
   uint32_t hex = hex_string_to_uint32_t(hex_string);
   address new_address;
   new_address.tag = extract_tag(hex, config);
@@ -71,7 +71,7 @@ block *create_memory_level(struct cache config){
   return malloc(config.num_blocks*(sizeof(block)));
 }
 
-bool level_read(block *level, struct cache config, char *hex_string){
+bool level_read(block *level, struct cache config, char *hex_string) {
   // Retorna true se bloco é valido e tag é igual, retorna false caso
   // contrário
   address a = decode_address(hex_string, config);
@@ -83,13 +83,13 @@ bool level_read(block *level, struct cache config, char *hex_string){
   return false;
 }
 
-void level_write(block *level, struct cache config, char *hex_string){
+void level_write(block *level, struct cache config, char *hex_string) {
   address a = decode_address(hex_string, config);
   block b = {a.tag, true};
   level[a.index] = b;
 }
 
-block** create_h_memory(struct cache *configs, int num_configs){
+block** create_h_memory(struct cache *configs, int num_configs) {
   block** h_memory = malloc(sizeof(block*) * num_configs);
 
   for(int i=0; i < num_configs; i++)
@@ -98,12 +98,14 @@ block** create_h_memory(struct cache *configs, int num_configs){
   return h_memory;
 }
 
-void h_memory_write(block** h_memory, struct cache *configs, int num_configs, char *hex_string){
+void h_memory_write(block** h_memory, struct cache *configs,
+                    int num_configs, char *hex_string) {
+
   for(int i=0; i < num_configs; i++)
     level_write(h_memory[i], configs[i], hex_string);
 }
 
-struct stats *create_stats(int num_configs){
+struct stats *create_stats(int num_configs) {
   struct stats *stats = malloc(sizeof(struct stats));
   stats->cycles = 0;
 
@@ -113,7 +115,10 @@ struct stats *create_stats(int num_configs){
   return stats;
 }
 
-void h_memory_read(block** h_memory, struct cache *configs, int num_configs, struct stats *stats, char *hex_string){
+void h_memory_read(block** h_memory, struct cache *configs,
+                   int num_configs, struct stats *stats,
+                   char *hex_string) {
+
   for(int i=0; i < num_configs; i++){
     bool found = level_read(h_memory[i], configs[i], hex_string);
     stats->cycles += configs[i].lat;
