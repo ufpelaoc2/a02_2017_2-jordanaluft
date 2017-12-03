@@ -7,9 +7,9 @@ Declaro que o presente trabalho contém código desenvolvido exclusivamente por 
 
 (Preencha com seus dados)
 
-- Nome completo: 
-- Username do Github: 
-- Email @inf: 
+- Nome completo: Jordana Sangalli Luft
+- Username do Github: jordanaluft
+- Email @inf: jsluft@gmail.com
 
 ## Descrição
 
