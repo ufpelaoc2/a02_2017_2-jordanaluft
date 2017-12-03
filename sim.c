@@ -135,5 +135,30 @@ struct stats * sim(struct cache * configs, int num_configs,
                    uint32_t mem_lat, char * filename, char * stream) {
   block** h_memory = create_h_memory(configs, num_configs);
   struct stats *stats = create_stats(num_configs);
+
+  char mode;
+  char address[9];
+
+  if (filename){
+    FILE *fp = fopen(filename, "r");
+    if (!fp){
+      printf("Erro ao abrir arquivo\n");
+      return NULL;
+    }
+    while(!feof(fp)){
+      fscanf(fp, "%c %s\n", &mode, address);
+      stats->cycles += mem_lat;
+      if (mode == 'R')
+        h_memory_read(h_memory, configs, num_configs, stats, address);
+      else if (mode == 'W')
+        h_memory_write(h_memory, configs, num_configs, address);
+      else
+        return NULL;
+    }
+    fclose(fp);
+  } else {
+    puts(stream);
+  }
+
   return stats;
 }
