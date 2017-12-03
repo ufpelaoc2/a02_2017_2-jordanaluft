@@ -15,7 +15,21 @@ void test_address_to_index(){
   isEqual(esperado, observado, 1);
 }
 
+void test_find_index_size(){
+  DESCRIBE("find_index_size");
+
+  WHEN("num_blocos: 64");
+  THEN("index: 6");
+
+  struct cache config = {1, 1, 64, 1};
+
+  int esperado = 6;
+  int observado = find_index_size(config);
+  isEqual(esperado, observado, 1);
+}
+
 int main(){
   test_address_to_index();
+  test_find_index_size();
   return 0;
 }

@@ -26,9 +26,11 @@ struct stats{
   * @param stream stream com traço (se filename for null)
   * @return estatísticas de simulação
   */
-struct stats * sim(struct cache * configs, int num_configs, 
-            uint32_t mem_lat, char * filename, char * stream);
+struct stats * sim(struct cache * configs, int num_configs,
+                   uint32_t mem_lat, char * filename, char * stream);
 
 int address_to_index(int address, struct cache config);
+
+int find_index_size(struct cache config);
 
 #endif // _SIM_H_

@@ -1,6 +1,5 @@
+#include <math.h>
 #include "sim.h"
-#include <stdio.h>
-
 
 int address_to_index(int address, struct cache config){
   int index, aux;
@@ -8,4 +7,8 @@ int address_to_index(int address, struct cache config){
   index = aux%(config.num_blocks);
 
   return index;
+}
+
+int find_index_size(struct cache config){
+  return (log2(config.num_blocks));
 }
