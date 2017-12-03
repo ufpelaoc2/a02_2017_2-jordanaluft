@@ -16,3 +16,10 @@ int find_index_size(struct cache config){
 int find_offset_size(struct cache config){
   return (log2(config.block));
 }
+
+int find_tag_size(struct cache config){
+  int index_size = find_index_size(config);
+  int offset_size = find_offset_size(config);
+  int tag_size = ACCESS_SIZE - (index_size + offset_size);
+  return tag_size;
+}

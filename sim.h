@@ -1,6 +1,6 @@
 #ifndef _SIM_H_
 #define _SIM_H_
-
+#define ACCESS_SIZE 32
 
 #include <stdint.h>
 
@@ -34,5 +34,7 @@ int address_to_index(int address, struct cache config);
 int find_index_size(struct cache config);
 
 int find_offset_size(struct cache config);
+
+int find_tag_size(struct cache config);
 
 #endif // _SIM_H_

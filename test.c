@@ -41,9 +41,23 @@ void test_find_offset_size(){
   isEqual(esperado, observado, 1);
 }
 
+void test_find_tag_size(){
+  DESCRIBE("find_tag_size");
+
+  WHEN("index size: 6 and offset size: 4");
+  THEN("tag: 22");
+
+  struct cache config = {1, 16, 64, 1};
+
+  int esperado = 22;
+  int observado = find_tag_size(config);
+  isEqual(esperado, observado, 1);
+}
+
 int main(){
   test_address_to_index();
   test_find_index_size();
   test_find_offset_size();
+  test_find_tag_size();
   return 0;
 }
