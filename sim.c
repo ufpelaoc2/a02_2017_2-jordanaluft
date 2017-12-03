@@ -1,6 +1,7 @@
 #include <math.h>
 #include <string.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include "sim.h"
 
 int address_to_index(int address, struct cache config){
@@ -64,4 +65,8 @@ address create_address(char *hex_string, struct cache config){
   new_address.offset = extract_offset(hex, config);
   new_address.index = extract_index(hex, config);
   return new_address;
+}
+
+block *create_block_array(struct cache config){
+  return malloc(config.num_blocks*(sizeof(block)));
 }

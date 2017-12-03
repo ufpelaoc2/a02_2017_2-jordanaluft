@@ -125,6 +125,18 @@ void test_create_address(){
   isEqual(esperado.index, observado.index, 1);
 }
 
+void test_create_block_array(){
+  DESCRIBE("create_block_array");
+
+  WHEN("num_blocks: 64");
+  THEN("Não quebra");
+
+  struct cache config = {1, 6, 64, 1};
+
+  block *array_address = create_block_array(config);
+  isNotNull(array_address, 1);
+}
+
 int main(){
   test_address_to_index();
   test_find_index_size();
@@ -135,5 +147,6 @@ int main(){
   test_extract_index();
   test_hex_string_to_uint32_t();
   test_create_address();
+  test_create_block_array();
   return 0;
 }

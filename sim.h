@@ -61,4 +61,6 @@ uint32_t hex_string_to_uint32_t(char *hex_string);
 
 address create_address(char *hex_string, struct cache config);
 
+block *create_block_array(struct cache config);
+
 #endif // _SIM_H_
