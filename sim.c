@@ -88,3 +88,12 @@ void level_write(block *level, struct cache config, char *hex_string){
   block b = {a.tag, true};
   level[a.index] = b;
 }
+
+block** create_h_memory(struct cache *configs, int num_configs){
+  block** h_memory = malloc(sizeof(block*) * num_configs);
+
+  for(int i=0; i < num_configs; i++)
+    h_memory[i] = create_memory_level(configs[i]);
+
+  return h_memory;
+}

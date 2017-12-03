@@ -187,6 +187,24 @@ void test_level_write(){
   isEqual(esperado, observado, 1);
 }
 
+void test_create_h_memory(){
+  DESCRIBE("create h_memory");
+
+  WHEN("Allocate");
+  THEN("Return Not Null");
+
+  int num_configs = 2;
+  struct cache config1 = {1, 16, 64, 1};
+  struct cache config2 = {1, 10, 20, 1};
+  struct cache configs[] = {config1, config2};
+
+  block** h_memory = create_h_memory(configs, num_configs);
+  isNotNull(h_memory, 1);
+
+  for(int i=0; i < num_configs; i++)
+    isNotNull(h_memory[i], 1);
+}
+
 int main(){
   test_address_to_index();
   test_find_index_size();
@@ -200,5 +218,6 @@ int main(){
   test_create_memory_level();
   test_level_read();
   test_level_write();
+  test_create_h_memory();
   return 0;
 }
