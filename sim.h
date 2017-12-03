@@ -29,5 +29,6 @@ struct stats{
 struct stats * sim(struct cache * configs, int num_configs, 
             uint32_t mem_lat, char * filename, char * stream);
 
+int address_to_index(int address, struct cache config);
 
 #endif // _SIM_H_
