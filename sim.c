@@ -23,3 +23,10 @@ int find_tag_size(struct cache config){
   int tag_size = ACCESS_SIZE - (index_size + offset_size);
   return tag_size;
 }
+
+int extract_tag(uint32_t address, struct cache config){
+  int index_size = find_index_size(config);
+  int offset_size = find_offset_size(config);
+  int size = index_size + offset_size;
+  return (address >> size);
+}

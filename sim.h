@@ -37,4 +37,6 @@ int find_offset_size(struct cache config);
 
 int find_tag_size(struct cache config);
 
+int extract_tag(uint32_t address, struct cache config);
+
 #endif // _SIM_H_
