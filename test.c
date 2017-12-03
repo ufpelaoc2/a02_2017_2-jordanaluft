@@ -80,6 +80,19 @@ void test_extract_offset(){
   isEqual(esperado, observado, 1);
 }
 
+void test_extract_index(){
+  DESCRIBE("extract_offset");
+
+  WHEN("address: 4294966474"); // 11111111111111111111110011001010
+  THEN("offset: 12");
+
+  struct cache config = {1, 16, 64, 1};
+  uint32_t address = 4294966474;
+  int esperado = 12;
+  int observado = extract_index(address, config);
+  isEqual(esperado, observado, 1);
+}
+
 int main(){
   test_address_to_index();
   test_find_index_size();
@@ -87,5 +100,6 @@ int main(){
   test_find_tag_size();
   test_extract_tag();
   test_extract_offset();
+  test_extract_index();
   return 0;
 }
