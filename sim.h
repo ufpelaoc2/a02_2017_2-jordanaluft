@@ -3,6 +3,7 @@
 #define ACCESS_SIZE 32
 
 #include <stdint.h>
+#include <stdbool.h>
 
 struct cache{
     uint32_t assoc; /* associatividade, 1 para map. direto */
@@ -24,6 +25,12 @@ typedef struct {
   uint32_t offset;
   uint32_t index;
 } address;
+
+
+typedef struct{
+  uint32_t tag;
+  bool valid;
+} block;
 
 /** Recebe um traço de endereços de memória acessados e simula hierarquia de memória
   * @param configs vetor de configurações de caches
