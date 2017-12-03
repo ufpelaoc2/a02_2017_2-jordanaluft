@@ -18,6 +18,13 @@ struct stats{
     unsigned long cycles; /* número total de ciclos da simulação */
 };
 
+
+typedef struct {
+  uint32_t tag;
+  uint32_t offset;
+  uint32_t index;
+} address;
+
 /** Recebe um traço de endereços de memória acessados e simula hierarquia de memória
   * @param configs vetor de configurações de caches
   * @param num_configs número de níveis de cache
@@ -44,5 +51,7 @@ int extract_offset(uint32_t address, struct cache config);
 int extract_index(uint32_t address, struct cache config);
 
 uint32_t hex_string_to_uint32_t(char *hex_string);
+
+address create_address(char *hex_string, struct cache config);
 
 #endif // _SIM_H_

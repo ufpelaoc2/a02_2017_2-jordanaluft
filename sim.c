@@ -56,3 +56,12 @@ uint32_t hex_string_to_uint32_t(char *hex_string){
   sscanf(buffer, "%X", &out);
   return out;
 }
+
+address create_address(char *hex_string, struct cache config){
+  uint32_t hex = hex_string_to_uint32_t(hex_string);
+  address new_address;
+  new_address.tag = extract_tag(hex, config);
+  new_address.offset = extract_offset(hex, config);
+  new_address.index = extract_index(hex, config);
+  return new_address;
+}
