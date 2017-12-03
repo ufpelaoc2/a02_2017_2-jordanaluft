@@ -43,4 +43,6 @@ int extract_offset(uint32_t address, struct cache config);
 
 int extract_index(uint32_t address, struct cache config);
 
+uint32_t hex_string_to_uint32_t(char *hex_string);
+
 #endif // _SIM_H_

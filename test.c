@@ -93,6 +93,18 @@ void test_extract_index(){
   isEqual(esperado, observado, 1);
 }
 
+void test_hex_string_to_uint32_t(){
+  DESCRIBE("convert_address");
+
+  WHEN("hex_string: 000000FF");
+  THEN("255");
+
+  char *hex_string = "000000FF";
+  int esperado = 255;
+  int observado = hex_string_to_uint32_t(hex_string);
+  isEqual(esperado, observado, 1);
+}
+
 int main(){
   test_address_to_index();
   test_find_index_size();
@@ -101,5 +113,6 @@ int main(){
   test_extract_tag();
   test_extract_offset();
   test_extract_index();
+  test_hex_string_to_uint32_t();
   return 0;
 }

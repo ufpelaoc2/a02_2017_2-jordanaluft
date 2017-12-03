@@ -1,4 +1,6 @@
 #include <math.h>
+#include <string.h>
+#include <stdio.h>
 #include "sim.h"
 
 int address_to_index(int address, struct cache config){
@@ -45,4 +47,12 @@ int extract_index(uint32_t address, struct cache config){
   uint32_t aux = (address << tag_size);
   int size = tag_size + offset_size;
   return (aux >> size);
+}
+
+uint32_t hex_string_to_uint32_t(char *hex_string){
+  char buffer[11] = "0x";
+  uint32_t out;
+  strcat(buffer, hex_string);
+  sscanf(buffer, "%X", &out);
+  return out;
 }
