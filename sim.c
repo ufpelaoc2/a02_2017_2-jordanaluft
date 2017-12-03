@@ -130,3 +130,10 @@ void h_memory_read(block** h_memory, struct cache *configs,
       stats->misses[i] += 1;
   }
 }
+
+struct stats * sim(struct cache * configs, int num_configs,
+                   uint32_t mem_lat, char * filename, char * stream) {
+  block** h_memory = create_h_memory(configs, num_configs);
+  struct stats *stats = create_stats(num_configs);
+  return stats;
+}
