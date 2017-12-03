@@ -12,3 +12,7 @@ int address_to_index(int address, struct cache config){
 int find_index_size(struct cache config){
   return (log2(config.num_blocks));
 }
+
+int find_offset_size(struct cache config){
+  return (log2(config.block));
+}

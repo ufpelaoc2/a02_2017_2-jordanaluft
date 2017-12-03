@@ -28,8 +28,22 @@ void test_find_index_size(){
   isEqual(esperado, observado, 1);
 }
 
+void test_find_offset_size(){
+  DESCRIBE("find_offset_size");
+
+  WHEN("blocks: 16");
+  THEN("offset: 4");
+
+  struct cache config = {1, 16, 1, 1};
+
+  int esperado = 4;
+  int observado = find_offset_size(config);
+  isEqual(esperado, observado, 1);
+}
+
 int main(){
   test_address_to_index();
   test_find_index_size();
+  test_find_offset_size();
   return 0;
 }

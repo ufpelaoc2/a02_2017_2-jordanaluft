@@ -33,4 +33,6 @@ int address_to_index(int address, struct cache config);
 
 int find_index_size(struct cache config);
 
+int find_offset_size(struct cache config);
+
 #endif // _SIM_H_
