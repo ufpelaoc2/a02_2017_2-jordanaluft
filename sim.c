@@ -102,3 +102,13 @@ void h_memory_write(block** h_memory, struct cache *configs, int num_configs, ch
   for(int i=0; i < num_configs; i++)
     level_write(h_memory[i], configs[i], hex_string);
 }
+
+struct stats *create_stats(int num_configs){
+  struct stats *stats = malloc(sizeof(struct stats));
+  stats->cycles = 0;
+
+  stats->hits = malloc(sizeof(unsigned long) * num_configs);
+  stats->misses = malloc(sizeof(unsigned long) * num_configs);
+
+  return stats;
+}

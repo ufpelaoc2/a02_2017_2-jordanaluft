@@ -225,6 +225,16 @@ void test_h_memory_write(){
   isEqual(h_memory[0][1].valid, false, 1);
 }
 
+void test_create_stats(){
+  DESCRIBE("create stats");
+
+  struct stats *stats = create_stats(2);
+  isNotNull(stats, 1);
+  isEqual(stats->cycles, 0, 1);
+  isNotNull(stats->hits, 1);
+  isNotNull(stats->misses, 1);
+}
+
 int main(){
   test_address_to_index();
   test_find_index_size();
@@ -240,5 +250,6 @@ int main(){
   test_level_write();
   test_create_h_memory();
   test_h_memory_write();
+  test_create_stats();
   return 0;
 }
