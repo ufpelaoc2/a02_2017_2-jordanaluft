@@ -164,7 +164,7 @@ struct stats * sim(struct cache * configs, int num_configs,
 
 bool run_simulation(block** h_memory, struct stats *stats,
                     struct cache *configs, int num_configs,
-                    uint32_t mem_lat, char mode, char *address){
+                    uint32_t mem_lat, char mode, char *address) {
   stats->cycles += mem_lat;
   if (mode == 'R')
     h_memory_read(h_memory, configs, num_configs, stats, address);
