@@ -69,4 +69,5 @@ void level_write(block *level, struct cache config, char *hex_string);
 
 block** create_h_memory(struct cache *configs, int num_configs);
 
+void h_memory_write(block** h_memory, struct cache *configs, int num_configs, char *hex_string);
 #endif // _SIM_H_

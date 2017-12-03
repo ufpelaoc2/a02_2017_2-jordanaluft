@@ -97,3 +97,8 @@ block** create_h_memory(struct cache *configs, int num_configs){
 
   return h_memory;
 }
+
+void h_memory_write(block** h_memory, struct cache *configs, int num_configs, char *hex_string){
+  for(int i=0; i < num_configs; i++)
+    level_write(h_memory[i], configs[i], hex_string);
+}

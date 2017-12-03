@@ -205,6 +205,26 @@ void test_create_h_memory(){
     isNotNull(h_memory[i], 1);
 }
 
+void test_h_memory_write(){
+  DESCRIBE("h_memory write");
+
+  WHEN("Written");
+  THEN("Return True");
+
+  char *hex_string = "FFFFFC0A";
+  int num_configs = 2;
+  struct cache config1 = {1, 16, 64, 1};
+  struct cache config2 = {1, 8, 16, 1};
+  struct cache configs[] = {config1, config2};
+
+  block** h_memory = create_h_memory(configs, num_configs);
+
+  h_memory_write(h_memory, configs, num_configs, hex_string);
+  isEqual(h_memory[0][0].valid, true, 1);
+  isEqual(h_memory[1][1].valid, true, 1);
+  isEqual(h_memory[0][1].valid, false, 1);
+}
+
 int main(){
   test_address_to_index();
   test_find_index_size();
@@ -219,5 +239,6 @@ int main(){
   test_level_read();
   test_level_write();
   test_create_h_memory();
+  test_h_memory_write();
   return 0;
 }
