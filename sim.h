@@ -73,4 +73,6 @@ void h_memory_write(block** h_memory, struct cache *configs, int num_configs, ch
 
 struct stats *create_stats(int num_configs);
 
+void h_memory_read(block** h_memory, struct cache *configs, int num_configs, struct stats *stats, char *hex_string);
+
 #endif // _SIM_H_

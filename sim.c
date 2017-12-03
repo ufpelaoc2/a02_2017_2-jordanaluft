@@ -112,3 +112,16 @@ struct stats *create_stats(int num_configs){
 
   return stats;
 }
+
+void h_memory_read(block** h_memory, struct cache *configs, int num_configs, struct stats *stats, char *hex_string){
+  for(int i=0; i < num_configs; i++){
+    bool found = level_read(h_memory[i], configs[i], hex_string);
+    stats->cycles += configs[i].lat;
+    if (found){
+      stats->hits[i] += 1;
+      break; // encontrou o que procurava
+    }
+    else
+      stats->misses[i] += 1;
+  }
+}
