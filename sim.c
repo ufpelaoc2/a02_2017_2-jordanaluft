@@ -177,3 +177,8 @@ bool run_simulation(block** h_memory, struct stats *stats,
     return false;
   return true;
 }
+
+int timestamp(){
+  static int i = 0;
+  return ++i;
+}

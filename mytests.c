@@ -294,6 +294,13 @@ void test_sim_stream(){
   isEqual(stats->misses[1], 0, 1);
 }
 
+void test_timestamp(){
+  DESCRIBE("timestamp");
+  isEqual(timestamp(), 1, 1);
+  isEqual(timestamp(), 2, 1);
+  isEqual(timestamp(), 3, 1);
+}
+
 int main(){
   test_address_to_index();
   test_find_index_size();
@@ -313,5 +320,6 @@ int main(){
   test_h_memory_read();
   test_sim_file();
   test_sim_stream();
+  test_timestamp();
   return 0;
 }

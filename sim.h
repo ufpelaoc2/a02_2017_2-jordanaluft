@@ -79,4 +79,6 @@ bool run_simulation(block** h_memory, struct stats *stats,
                     struct cache *configs, int num_configs,
                     uint32_t mem_lat, char mode, char *address);
 
+int timestamp();
+
 #endif // _SIM_H_
