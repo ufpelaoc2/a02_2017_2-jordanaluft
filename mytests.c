@@ -217,9 +217,10 @@ void test_h_memory_write(){
   struct cache config2 = {1, 8, 16, 1};
   struct cache configs[] = {config1, config2};
 
+  struct stats *stats = create_stats(num_configs);
   block** h_memory = create_h_memory(configs, num_configs);
 
-  h_memory_write(h_memory, configs, num_configs, hex_string);
+  h_memory_write(h_memory, configs, stats, num_configs, hex_string);
   isEqual(h_memory[0][0].valid, true, 1);
   isEqual(h_memory[1][1].valid, true, 1);
   isEqual(h_memory[0][1].valid, false, 1);
@@ -246,11 +247,11 @@ void test_h_memory_read(){
   struct stats *stats = create_stats(num_configs);
 
   block** h_memory = create_h_memory(configs, num_configs);
-  h_memory_write(h_memory, configs, num_configs, hex_string);
+  h_memory_write(h_memory, configs, stats, num_configs, hex_string);
 
   h_memory_read(h_memory, configs, num_configs, stats, hex_string);
 
-  isEqual(stats->cycles, 42, 1);
+  isEqual(stats->cycles, 88, 1);
   isEqual(stats->hits[0], 1, 1);
   isEqual(stats->misses[0], 0, 1);
 }
@@ -267,7 +268,7 @@ void test_sim_file(){
   struct cache configs[] = {config1, config2};
   struct stats *stats = sim(configs, num_configs, mem_lat, filename, stream);
 
-  isEqual(stats->cycles, 44, 1);
+  isEqual(stats->cycles, 90, 1);
   isEqual(stats->hits[0], 1, 1);
   isEqual(stats->misses[0], 0, 1);
   isEqual(stats->hits[1], 0, 1);
@@ -286,7 +287,7 @@ void test_sim_stream(){
   struct cache configs[] = {config1, config2};
   struct stats *stats = sim(configs, num_configs, mem_lat, filename, stream);
 
-  isEqual(stats->cycles, 44, 1);
+  isEqual(stats->cycles, 90, 1);
   isEqual(stats->hits[0], 1, 1);
   isEqual(stats->misses[0], 0, 1);
   isEqual(stats->hits[1], 0, 1);

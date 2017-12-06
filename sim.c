@@ -99,10 +99,13 @@ block** create_h_memory(struct cache *configs, int num_configs) {
 }
 
 void h_memory_write(block** h_memory, struct cache *configs,
+		    struct stats *stats,
                     int num_configs, char *hex_string) {
 
-  for(int i=0; i < num_configs; i++)
+  for(int i=0; i < num_configs; i++){
     level_write(h_memory[i], configs[i], hex_string);
+    stats->cycles += configs[i].lat;
+  }
 }
 
 struct stats *create_stats(int num_configs) {
@@ -169,7 +172,7 @@ bool run_simulation(block** h_memory, struct stats *stats,
   if (mode == 'R')
     h_memory_read(h_memory, configs, num_configs, stats, address);
   else if (mode == 'W')
-    h_memory_write(h_memory, configs, num_configs, address);
+    h_memory_write(h_memory, configs, stats, num_configs, address);
   else
     return false;
   return true;
