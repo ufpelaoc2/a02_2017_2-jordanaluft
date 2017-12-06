@@ -5,8 +5,12 @@ LDFLAGS=-lm
 
 all: grade
 
-sim: sim.c mytests.c
-	$(CC) $(CFLAGS) -o sim sim.c mytests.c $(LDFLAGS)
+sim: sim.c tests.c
+	$(CC) $(CFLAGS) -o sim sim.c tests.c $(LDFLAGS)
+
+mytests: sim.c mytests.c
+	$(CC) $(CFLAGS) -o mytests sim.c mytests.c $(LDFLAGS)
+	./mytests
 
 grade: sim
 	./sim
