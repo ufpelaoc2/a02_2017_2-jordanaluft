@@ -30,6 +30,7 @@ typedef struct {
 typedef struct{
   uint32_t tag;
   bool valid;
+  int timestamp;
 } block;
 
 /** Recebe um traço de endereços de memória acessados e simula hierarquia de memória

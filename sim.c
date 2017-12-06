@@ -78,14 +78,16 @@ bool level_read(block *level, struct cache config, char *hex_string) {
   block b = level[a.index];
   if (!b.valid)
     return false;
-  if (b.tag == a.tag)
+  if (b.tag == a.tag){
+    level[a.index].timestamp = timestamp();
     return true;
+  }
   return false;
 }
 
 void level_write(block *level, struct cache config, char *hex_string) {
   address a = decode_address(hex_string, config);
-  block b = {a.tag, true};
+  block b = {a.tag, true, timestamp()};
   level[a.index] = b;
 }
 

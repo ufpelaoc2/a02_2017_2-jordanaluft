@@ -154,7 +154,7 @@ void test_level_read(){
   WHEN("Hot and Tag Not Equal");
   THEN("Return false");
 
-  block b = {4194304, true};
+  block b = {4194304, true, 0};
   level[0] = b;
   observado = level_read(level, config, "FFFFFC0A");
 
@@ -177,14 +177,19 @@ void test_level_write(){
   WHEN("Written");
   THEN("Return True");
 
+  int time = timestamp();
+
+
   char *hex_string = "FFFFFC0A";
   struct cache config = {1, 16, 64, 1};
   block *level = create_memory_level(config);
 
+  isEqual(level[0].timestamp, 0, 1);
   level_write(level, config, hex_string);
   bool observado = level_read(level, config, hex_string);
   bool esperado = true;
   isEqual(esperado, observado, 1);
+  isEqual(level[0].timestamp, time + 2, 1);
 }
 
 void test_create_h_memory(){
@@ -296,9 +301,10 @@ void test_sim_stream(){
 
 void test_timestamp(){
   DESCRIBE("timestamp");
-  isEqual(timestamp(), 1, 1);
-  isEqual(timestamp(), 2, 1);
-  isEqual(timestamp(), 3, 1);
+  int time = timestamp();
+  isEqual(timestamp(), time + 1, 1);
+  isEqual(timestamp(), time + 2, 1);
+  isEqual(timestamp(), time + 3, 1);
 }
 
 int main(){
