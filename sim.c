@@ -4,6 +4,122 @@
 #include <stdlib.h>
 #include "sim.h"
 
+struct stats * sim(struct cache * configs, int num_configs,
+                   uint32_t mem_lat, char * filename, char * stream) {
+  block** h_memory = create_h_memory(configs, num_configs);
+  struct stats *stats = create_stats(num_configs);
+
+  char mode;
+  char address[9];
+
+  if (filename){
+    FILE *fp = fopen(filename, "r");
+    if (!fp){
+      printf("Erro ao abrir arquivo\n");
+      return NULL;
+    }
+    while(!feof(fp)){
+      fscanf(fp, "%c %s\n", &mode, address);
+      run_simulation(h_memory, stats, configs, num_configs,
+                     mem_lat, mode, address);
+    }
+    fclose(fp);
+  } else {
+    for(int i = 0; stream[i] != '\0'; i += 11){
+      sscanf(stream + i, "%c %s\n", &mode, address);
+      run_simulation(h_memory, stats, configs, num_configs,
+                     mem_lat, mode, address);
+    }
+  }
+
+  return stats;
+}
+
+bool run_simulation(block** h_memory, struct stats *stats,
+                    struct cache *configs, int num_configs,
+                    uint32_t mem_lat, char mode, char *address) {
+  stats->cycles += mem_lat;
+  if (mode == 'R')
+    h_memory_read(h_memory, configs, num_configs, stats, address);
+  else if (mode == 'W')
+    h_memory_write(h_memory, configs, stats, num_configs, address);
+  else
+    return false;
+  return true;
+}
+
+void h_memory_read(block** h_memory, struct cache *configs,
+                   int num_configs, struct stats *stats,
+                   char *hex_string) {
+
+  for(int i=0; i < num_configs; i++){
+    bool found = level_read(h_memory[i], configs[i], hex_string);
+    stats->cycles += configs[i].lat;
+    if (found){
+      stats->hits[i] += 1;
+      break; // encontrou o que procurava
+    }
+    else
+      stats->misses[i] += 1;
+  }
+}
+
+void h_memory_write(block** h_memory, struct cache *configs,
+		    struct stats *stats,
+                    int num_configs, char *hex_string) {
+
+  for(int i=0; i < num_configs; i++){
+    level_write(h_memory[i], configs[i], hex_string);
+    stats->cycles += configs[i].lat;
+  }
+}
+
+bool level_read(block *level, struct cache config, char *hex_string) {
+  // Retorna true se bloco é valido e tag é igual, retorna false caso
+  // contrário
+  address a = decode_address(hex_string, config);
+  block b = level[a.index];
+  if (!b.valid)
+    return false;
+  if (b.tag == a.tag){
+    level[a.index].timestamp = timestamp();
+    return true;
+  }
+  return false;
+}
+
+void level_write(block *level, struct cache config, char *hex_string) {
+  address a = decode_address(hex_string, config);
+  block b = {a.tag, true, timestamp()};
+  level[a.index] = b;
+}
+
+block** create_h_memory(struct cache *configs, int num_configs) {
+  block** h_memory = malloc(sizeof(block*) * num_configs);
+
+  for(int i=0; i < num_configs; i++)
+    h_memory[i] = create_memory_level(configs[i]);
+
+  return h_memory;
+}
+
+block *create_memory_level(struct cache config){
+  return malloc(config.num_blocks*(sizeof(block)));
+}
+
+struct stats *create_stats(int num_configs) {
+  struct stats *stats = malloc(sizeof(struct stats));
+  stats->cycles = 0;
+
+  stats->hits = malloc(sizeof(unsigned long) * num_configs);
+  stats->misses = malloc(sizeof(unsigned long) * num_configs);
+
+  return stats;
+}
+
+
+
+
 int address_to_index(int address, struct cache config) {
   int index, aux;
   aux = address/config.block; // endereco / bytes por bloco
@@ -65,119 +181,6 @@ address decode_address(char *hex_string, struct cache config) {
   new_address.offset = extract_offset(hex, config);
   new_address.index = extract_index(hex, config);
   return new_address;
-}
-
-block *create_memory_level(struct cache config){
-  return malloc(config.num_blocks*(sizeof(block)));
-}
-
-bool level_read(block *level, struct cache config, char *hex_string) {
-  // Retorna true se bloco é valido e tag é igual, retorna false caso
-  // contrário
-  address a = decode_address(hex_string, config);
-  block b = level[a.index];
-  if (!b.valid)
-    return false;
-  if (b.tag == a.tag){
-    level[a.index].timestamp = timestamp();
-    return true;
-  }
-  return false;
-}
-
-void level_write(block *level, struct cache config, char *hex_string) {
-  address a = decode_address(hex_string, config);
-  block b = {a.tag, true, timestamp()};
-  level[a.index] = b;
-}
-
-block** create_h_memory(struct cache *configs, int num_configs) {
-  block** h_memory = malloc(sizeof(block*) * num_configs);
-
-  for(int i=0; i < num_configs; i++)
-    h_memory[i] = create_memory_level(configs[i]);
-
-  return h_memory;
-}
-
-void h_memory_write(block** h_memory, struct cache *configs,
-		    struct stats *stats,
-                    int num_configs, char *hex_string) {
-
-  for(int i=0; i < num_configs; i++){
-    level_write(h_memory[i], configs[i], hex_string);
-    stats->cycles += configs[i].lat;
-  }
-}
-
-struct stats *create_stats(int num_configs) {
-  struct stats *stats = malloc(sizeof(struct stats));
-  stats->cycles = 0;
-
-  stats->hits = malloc(sizeof(unsigned long) * num_configs);
-  stats->misses = malloc(sizeof(unsigned long) * num_configs);
-
-  return stats;
-}
-
-void h_memory_read(block** h_memory, struct cache *configs,
-                   int num_configs, struct stats *stats,
-                   char *hex_string) {
-
-  for(int i=0; i < num_configs; i++){
-    bool found = level_read(h_memory[i], configs[i], hex_string);
-    stats->cycles += configs[i].lat;
-    if (found){
-      stats->hits[i] += 1;
-      break; // encontrou o que procurava
-    }
-    else
-      stats->misses[i] += 1;
-  }
-}
-
-struct stats * sim(struct cache * configs, int num_configs,
-                   uint32_t mem_lat, char * filename, char * stream) {
-  block** h_memory = create_h_memory(configs, num_configs);
-  struct stats *stats = create_stats(num_configs);
-
-  char mode;
-  char address[9];
-
-  if (filename){
-    FILE *fp = fopen(filename, "r");
-    if (!fp){
-      printf("Erro ao abrir arquivo\n");
-      return NULL;
-    }
-    while(!feof(fp)){
-      fscanf(fp, "%c %s\n", &mode, address);
-      run_simulation(h_memory, stats, configs, num_configs,
-                     mem_lat, mode, address);
-    }
-    fclose(fp);
-  } else {
-    for(int i = 0; stream[i] != '\0'; i += 11){
-      sscanf(stream + i, "%c %s\n", &mode, address);
-      run_simulation(h_memory, stats, configs, num_configs,
-                     mem_lat, mode, address);
-    }
-  }
-
-  return stats;
-}
-
-bool run_simulation(block** h_memory, struct stats *stats,
-                    struct cache *configs, int num_configs,
-                    uint32_t mem_lat, char mode, char *address) {
-  stats->cycles += mem_lat;
-  if (mode == 'R')
-    h_memory_read(h_memory, configs, num_configs, stats, address);
-  else if (mode == 'W')
-    h_memory_write(h_memory, configs, stats, num_configs, address);
-  else
-    return false;
-  return true;
 }
 
 int timestamp(){
