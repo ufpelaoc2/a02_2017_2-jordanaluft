@@ -43,7 +43,6 @@ bool run_simulation(block** h_memory, struct stats *stats,
     h_memory_read(h_memory, configs, num_configs, stats, address);
   else if (mode == 'W'){
     h_memory_write(h_memory, configs, stats, num_configs, address);
-    stats->cycles += mem_lat;
   }
   else
     return false;
