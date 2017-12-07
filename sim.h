@@ -74,12 +74,19 @@ void h_memory_write(block** h_memory, struct cache *configs, struct stats *stats
 
 struct stats *create_stats(int num_configs);
 
-void h_memory_read(block** h_memory, struct cache *configs, int num_configs, struct stats *stats, char *hex_string);
+bool h_memory_read(block** h_memory, struct cache *configs, int num_configs, struct stats *stats, char *hex_string);
 
 bool run_simulation(block** h_memory, struct stats *stats,
                     struct cache *configs, int num_configs,
                     uint32_t mem_lat, char mode, char *address);
 
 int timestamp();
+
+
+void h_memory_write_on_buffer(block** h_memory, struct cache *configs,
+                              int num_configs, char *hex_string);
+
+bool h_memory_read_on_buffer(block** h_memory, struct cache *configs,
+                   int num_configs, char *hex_string);
 
 #endif // _SIM_H_

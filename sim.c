@@ -39,17 +39,28 @@ bool run_simulation(block** h_memory, struct stats *stats,
                     struct cache *configs, int num_configs,
                     uint32_t mem_lat, char mode, char *address) {
 
-  if (mode == 'R')
-    h_memory_read(h_memory, configs, num_configs, stats, address);
+  if (mode == 'R'){
+    bool found = h_memory_read(h_memory, configs, num_configs, stats, address);
+    if (!found){
+      stats->cycles += mem_lat;
+      h_memory_write_on_buffer(h_memory, configs, num_configs, address);
+    }
+  }
   else if (mode == 'W'){
-    h_memory_write(h_memory, configs, stats, num_configs, address);
+    bool found = h_memory_read_on_buffer(h_memory, configs, num_configs, address);
+    if (!found){
+      h_memory_write(h_memory, configs, stats, num_configs, address);
+      stats->cycles += mem_lat;
+    }
+    else
+      stats->cycles += configs->lat;
   }
   else
     return false;
   return true;
 }
 
-void h_memory_read(block** h_memory, struct cache *configs,
+bool h_memory_read(block** h_memory, struct cache *configs,
                    int num_configs, struct stats *stats,
                    char *hex_string) {
 
@@ -58,11 +69,23 @@ void h_memory_read(block** h_memory, struct cache *configs,
     stats->cycles += configs[i].lat;
     if (found){
       stats->hits[i] += 1;
-      break; // encontrou o que procurava
+      return true; // encontrou o que procurava
     }
     else
       stats->misses[i] += 1;
   }
+  return false;
+}
+
+bool h_memory_read_on_buffer(block** h_memory, struct cache *configs,
+                             int num_configs, char *hex_string) {
+
+  for(int i=0; i < num_configs; i++){
+    bool found = level_read(h_memory[i], configs[i], hex_string);
+    if (found)
+      return true;
+  }
+  return false;
 }
 
 void h_memory_write(block** h_memory, struct cache *configs,
@@ -73,6 +96,13 @@ void h_memory_write(block** h_memory, struct cache *configs,
     level_write(h_memory[i], configs[i], hex_string);
     stats->cycles += configs[i].lat;
   }
+}
+
+void h_memory_write_on_buffer(block** h_memory, struct cache *configs,
+                              int num_configs, char *hex_string) {
+
+  for(int i=0; i < num_configs; i++)
+    level_write(h_memory[i], configs[i], hex_string);
 }
 
 bool level_read(block *level, struct cache config, char *hex_string) {
