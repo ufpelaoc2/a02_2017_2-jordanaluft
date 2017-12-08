@@ -109,11 +109,17 @@ bool level_read(block *level, struct cache config, char *hex_string) {
   // Retorna true se bloco é valido e tag é igual, retorna false caso
   // contrário
   address a = decode_address(hex_string, config);
-  block b = level[a.index];
+  int index;
+  if(is_associative(config))
+    index = 0;
+  else
+    index = a.index;
+
+  block b = level[index];
   if (!b.valid)
     return false;
   if (b.tag == a.tag){
-    level[a.index].timestamp = timestamp();
+    level[index].timestamp = timestamp();
     return true;
   }
   return false;
@@ -122,7 +128,13 @@ bool level_read(block *level, struct cache config, char *hex_string) {
 void level_write(block *level, struct cache config, char *hex_string) {
   address a = decode_address(hex_string, config);
   block b = {a.tag, true, timestamp()};
-  level[a.index] = b;
+  int index;
+  if(is_associative(config))
+    index = 0;
+  else
+    index = a.index;
+
+  level[index] = b;
 }
 
 block** create_h_memory(struct cache *configs, int num_configs) {
