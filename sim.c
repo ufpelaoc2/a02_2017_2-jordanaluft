@@ -109,9 +109,16 @@ bool level_read(block *level, struct cache config, char *hex_string) {
   // Retorna true se bloco é valido e tag é igual, retorna false caso
   // contrário
   address a = decode_address(hex_string, config);
+
   int index;
-  if(is_associative(config))
-    index = 0;
+  if(is_associative(config)){
+    int blocks_per_group = ceil((double)config.num_blocks / (double)config.assoc);
+    int start = blocks_per_group * a.index;
+    int end = start + blocks_per_group;
+    for(int i = start; i < end; i++){
+      index = 0;
+    }
+  }
   else
     index = a.index;
 
