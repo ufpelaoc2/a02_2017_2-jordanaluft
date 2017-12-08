@@ -207,3 +207,7 @@ int timestamp(){
   static int i = 0;
   return ++i;
 }
+
+bool is_associative(struct cache config){
+  return config.assoc > 1;
+}

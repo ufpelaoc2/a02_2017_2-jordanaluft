@@ -89,4 +89,5 @@ void h_memory_write_on_buffer(block** h_memory, struct cache *configs,
 bool h_memory_read_on_buffer(block** h_memory, struct cache *configs,
                    int num_configs, char *hex_string);
 
+bool is_associative(struct cache config);
 #endif // _SIM_H_
