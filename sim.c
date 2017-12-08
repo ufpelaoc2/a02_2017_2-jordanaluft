@@ -149,7 +149,8 @@ struct stats *create_stats(int num_configs) {
 }
 
 int find_index_size(struct cache config) {
-  return (log2(config.num_blocks));
+  int b = is_associative(config) ? config.assoc : config.num_blocks;
+  return (log2(b));
 }
 
 int find_offset_size(struct cache config) {
