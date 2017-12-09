@@ -111,19 +111,18 @@ bool level_read(block *level, struct cache config, char *hex_string) {
   address addr = decode_address(hex_string, config);
 
   int index;
-  if(is_associative(config)){
+  if(is_associative(config)) {
     group grp = make_group(config, addr);
-    for(int i = grp.start; i < grp.end; i++){
-      index = 0;
-    }
-  }
-  else
-    index = addr.index;
+    for(int i = grp.start; i < grp.end; i++)
+      if(level[i].tag == addr.tag)
+        index = i;
+    index = 0; // para evitar segfault resolvi deixar o indice sempre em zero
+  } else index = addr.index;
 
-  block b = level[index];
-  if (!b.valid)
+  block blk = level[index];
+  if (!blk.valid)
     return false;
-  if (b.tag == addr.tag){
+  if (blk.tag == addr.tag){
     level[index].timestamp = timestamp();
     return true;
   }
@@ -131,14 +130,34 @@ bool level_read(block *level, struct cache config, char *hex_string) {
 }
 
 void level_write(block *level, struct cache config, char *hex_string) {
-  address a = decode_address(hex_string, config);
-  block b = {a.tag, true, timestamp()};
-  int index;
-  if(is_associative(config))
-    index = 0;
-  else
-    index = a.index;
+  address addr = decode_address(hex_string, config);
 
+  block b = {addr.tag, true, timestamp()};
+
+  int index;
+  bool found_space = false;
+  int oldest_block_index = 0;
+  block oldest_block = level[oldest_block_index];
+
+  if(is_associative(config)) {
+    group grp = make_group(config, addr);
+    for (int i = grp.start; i < grp.end; i++) {
+      block current = level[i];
+      if(!current.valid) {
+        index = i;
+        found_space = true;
+        break;
+      }
+      if (current.timestamp < oldest_block.timestamp) {
+        oldest_block = current;
+        oldest_block_index = i;
+      }
+
+    }
+    index = found_space ? index : oldest_block_index;
+    index = 0; // para evitar segfault resolvi deixar o indice sempre em zero
+  } else
+    index = addr.index;
   level[index] = b;
 }
 
@@ -163,6 +182,15 @@ struct stats *create_stats(int num_configs) {
   stats->misses = malloc(sizeof(unsigned long) * num_configs);
 
   return stats;
+}
+
+address decode_address(char *hex_string, struct cache config) {
+  uint32_t hex = hex_string_to_uint32_t(hex_string);
+  address new_address;
+  new_address.tag = extract_tag(hex, config);
+  new_address.offset = extract_offset(hex, config);
+  new_address.index = extract_index(hex, config);
+  return new_address;
 }
 
 int find_index_size(struct cache config) {
@@ -212,15 +240,6 @@ uint32_t hex_string_to_uint32_t(char *hex_string) {
   return out;
 }
 
-address decode_address(char *hex_string, struct cache config) {
-  uint32_t hex = hex_string_to_uint32_t(hex_string);
-  address new_address;
-  new_address.tag = extract_tag(hex, config);
-  new_address.offset = extract_offset(hex, config);
-  new_address.index = extract_index(hex, config);
-  return new_address;
-}
-
 int timestamp(){
   static int i = 0;
   return ++i;
@@ -228,6 +247,10 @@ int timestamp(){
 
 bool is_associative(struct cache config){
   return config.assoc > 1;
+}
+
+void p(char *s, int value) {
+  printf("%s: %d; ", s, value);
 }
 
 group make_group(struct cache config, address addr){

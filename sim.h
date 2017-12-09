@@ -98,4 +98,6 @@ bool h_memory_read_on_buffer(block** h_memory, struct cache *configs,
 group make_group(struct cache config, address addr);
 
 bool is_associative(struct cache config);
+
+void p(char *s, int value);
 #endif // _SIM_H_
