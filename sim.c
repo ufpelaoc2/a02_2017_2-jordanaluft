@@ -77,6 +77,16 @@ bool h_memory_read(block** h_memory, struct cache *configs,
   return false;
 }
 
+void h_memory_write(block** h_memory, struct cache *configs,
+		    struct stats *stats,
+                    int num_configs, char *hex_string) {
+
+  for(int i=0; i < num_configs; i++){
+    level_write(h_memory[i], configs[i], hex_string);
+    stats->cycles += configs[i].lat;
+  }
+}
+
 bool h_memory_read_on_buffer(block** h_memory, struct cache *configs,
                              int num_configs, char *hex_string) {
 
@@ -86,16 +96,6 @@ bool h_memory_read_on_buffer(block** h_memory, struct cache *configs,
       return true;
   }
   return false;
-}
-
-void h_memory_write(block** h_memory, struct cache *configs,
-		    struct stats *stats,
-                    int num_configs, char *hex_string) {
-
-  for(int i=0; i < num_configs; i++){
-    level_write(h_memory[i], configs[i], hex_string);
-    stats->cycles += configs[i].lat;
-  }
 }
 
 void h_memory_write_on_buffer(block** h_memory, struct cache *configs,
@@ -108,24 +108,22 @@ void h_memory_write_on_buffer(block** h_memory, struct cache *configs,
 bool level_read(block *level, struct cache config, char *hex_string) {
   // Retorna true se bloco é valido e tag é igual, retorna false caso
   // contrário
-  address a = decode_address(hex_string, config);
+  address addr = decode_address(hex_string, config);
 
   int index;
   if(is_associative(config)){
-    int blocks_per_group = ceil((double)config.num_blocks / (double)config.assoc);
-    int start = blocks_per_group * a.index;
-    int end = start + blocks_per_group;
-    for(int i = start; i < end; i++){
+    group grp = make_group(config, addr);
+    for(int i = grp.start; i < grp.end; i++){
       index = 0;
     }
   }
   else
-    index = a.index;
+    index = addr.index;
 
   block b = level[index];
   if (!b.valid)
     return false;
-  if (b.tag == a.tag){
+  if (b.tag == addr.tag){
     level[index].timestamp = timestamp();
     return true;
   }
@@ -231,3 +229,11 @@ int timestamp(){
 bool is_associative(struct cache config){
   return config.assoc > 1;
 }
+
+group make_group(struct cache config, address addr){
+  int blocks_per_group = ceil((double)config.num_blocks / (double)config.assoc);
+  int start = blocks_per_group * addr.index;
+  int end = start + blocks_per_group;
+  group g = {start, end};
+  return g;
+};

@@ -33,6 +33,12 @@ typedef struct{
   int timestamp;
 } block;
 
+
+typedef struct {
+  int start;
+  int end;
+} group;
+
 /** Recebe um traço de endereços de memória acessados e simula hierarquia de memória
   * @param configs vetor de configurações de caches
   * @param num_configs número de níveis de cache
@@ -88,6 +94,8 @@ void h_memory_write_on_buffer(block** h_memory, struct cache *configs,
 
 bool h_memory_read_on_buffer(block** h_memory, struct cache *configs,
                    int num_configs, char *hex_string);
+
+group make_group(struct cache config, address addr);
 
 bool is_associative(struct cache config);
 #endif // _SIM_H_
